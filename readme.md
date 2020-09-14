@@ -12,7 +12,7 @@ expect(result[1]).to eq [4,5,6]
 
 This library is a fun if not very meaningful excuse to play with domain specific languages & the method_missing method in ruby. 
 
-As I built this as a learning toy, I'm choosing not encapsulate it in a gem.
+As I built this as a learning toy, I'm choosing not to register it in a gem (I will upon request).
 
 ## Features
 
