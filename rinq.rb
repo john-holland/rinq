@@ -23,7 +23,12 @@ module Rinq
             @from = data_source ? From.new(data_source) : @from
         end
     end
-
+ 
+    def self.iterator(&block)
+        iterator_query = instance_eval(&block)
+        iterator_query
+    end
+    
     def self.query(&block)
         query = instance_eval(&block)
         query
@@ -108,13 +113,18 @@ module Rinq
     def self.select(*args)
         from = nil
         where = nil
+        group_by = nil
+        as = nil
 
         case args
+            in [*queries, From => from, Where => where, GroupBy => group_by, As => as]
+            in [*queries, From => from, Where => where, GroupBy => group_by]
             in [*queries, From => from, Where => where]
+            in [*queries, From => from, GroupBy => group_by]
             in [*queries, From => from]
         end
 
-        query = Query.new(from(from), Select.new(queries), where)
+        query = Query.new(from(from), Select.new(queries), where, group_by)
         query.from.column_names = if query.from.is_a? ColumnData
                                     query.from.column_names
                                   else
@@ -122,7 +132,6 @@ module Rinq
                                   end
         
         query
-
     end
 
     def self.from(data_source)
@@ -208,12 +217,65 @@ module Rinq
         end
     end
 
-    def self.test1(&block)
-        puts "huh?"
-        5
+    def method_missing(name, *args)
+        if (args.length == 0 || args.length > 1)
+            throw new RuntimeError('table alias failed as no column specifier was referenced')
+        end
+        return Alias.new(name, args[0])
+    end
+
+    class Alias
+        attr_reader :name, :column_reference
+
+        def initialize(name, column_reference)
+            @name = name
+            @column_reference = column_reference
+        end
     end
 
     def self.where(predicate = nil, &block_predicate)
         Where.new(block_predicate || predicate)
+    end
+
+    def self.group_by(&block_classifier)
+        GroupBy.new(block_classifier)
+    end
+
+    class GroupBy
+        def initialize(query, block_classifier)
+            @query = query
+            @block_classifier = block_classifier
+        end
+
+        def apply(data_source)
+            data_source.group_by(&@block_classifier)
+        end
+
+        def method_missing(name, *args)
+            if (!@query) 
+                #raise RuntimeError("the where clause was called without being passed a query")
+            end
+
+            i = @query.from.index_for_column_name(name)
+            if i == -1 || i.nil?
+                return nil
+            end
+
+            # puts i
+            @results[i]
+        end
+    end
+
+    class As
+        attr_reader name;
+
+        def initialize(name, query)
+            @name = name
+            @query = query
+        end
+
+        def apply
+            @query.column_names << @name
+        end
     end
 end

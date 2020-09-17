@@ -53,6 +53,19 @@ describe 'rinq' do
         expect(result).to eq list
     end
 
+    it 'should group_by, and join on values' do
+        l = list
+        other_list = list
+        result = Rinq.query do
+            select c(:x), :y, :z,
+            from(with_columns(l, :x, :y, :z)),
+            join(with_columns(other_list, :x, :y, ;z), as 'c', on { c(:x) == :x }),
+            group_by :x
+        end.exec
+        x, y, z = result.shift
+        expect(result).to eq list
+    end
+
     it 'should select count along with columns' do
         l = list
         result = Rinq.query do
