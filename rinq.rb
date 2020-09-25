@@ -115,8 +115,12 @@ module Rinq
         where = nil
         group_by = nil
         as = nil
+        join = []
 
         case args
+            in [*queries, From => from, Join => *join]
+            in [*queries, From => from, Join => *join, Where => where]
+            in [*queries, From => from, Join => *join, Where => where]
             in [*queries, From => from, Where => where, GroupBy => group_by, As => as]
             in [*queries, From => from, Where => where, GroupBy => group_by]
             in [*queries, From => from, Where => where]
