@@ -1,6 +1,107 @@
-# Rinq (ruby integrated query)
+# Rinq
 
-Rinq is a "LINQ-like" for ruby! The primary differences being that as ruby has native functional methods for most collection types, we are just implementing the query syntax.
+A Crystal implementation of a query-like DSL for data manipulation.
+
+## Installation
+
+1. Add the dependency to your `shard.yml`:
+
+```yaml
+dependencies:
+  rinq:
+    github: your-username/rinq
+```
+
+2. Run `shards install`
+
+## Usage
+
+Rinq provides a simple DSL for querying and manipulating data. Here are some examples:
+
+### Basic Select
+
+```crystal
+require "rinq"
+
+data = [
+  [1, "a"],
+  [2, "b"],
+  [3, "c"]
+]
+
+# Using direct method calls
+result = Rinq.select(:*, Rinq.from(data))
+result.exec
+
+# Using the query macro
+result = Rinq.query do
+  select(:*, from(data))
+end
+result.exec
+
+# Using the ydink macro (alternative syntax)
+result = Rinq.ydink do
+  select(:*, from(data))
+end
+result.exec
+```
+
+### Select with Where Clause
+
+```crystal
+data = [
+  [1, "a"],
+  [2, "b"],
+  [3, "c"]
+]
+
+result = Rinq.select(:*, Rinq.from(data), Rinq.where { self[0] > 1 })
+result.exec
+```
+
+### Select with Column Names
+
+```crystal
+data = [
+  [1, "a"],
+  [2, "b"],
+  [3, "c"]
+]
+
+result = Rinq.select(:id, :name, Rinq.with_columns(data, :id, :name))
+result.exec
+```
+
+### Count Operation
+
+```crystal
+data = [
+  [1, "a"],
+  [2, "b"],
+  [3, "c"]
+]
+
+result = Rinq.select(Rinq.count(:*), Rinq.from(data))
+result.exec
+```
+
+## Development
+
+1. Clone the repository
+2. Run `shards install`
+3. Run `crystal spec` to run the tests
+
+## Contributing
+
+1. Fork it (<https://github.com/your-username/rinq/fork>)
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ```ruby
 query = Rinq.query do

@@ -1,0 +1,20 @@
+name: rinq
+version: 0.1.0
+
+authors:
+  - Your Name <your.email@example.com>
+
+description: |
+  A Crystal implementation of Rinq, a query-like DSL for data manipulation.
+
+dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.6.0
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.6.0
+
+license: MIT 
