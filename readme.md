@@ -103,6 +103,9 @@ result.exec
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+**Credits:**
+This project benefited from AI code assistance by [Cursor](https://www.cursor.com/).
+
 ```ruby
 query = Rinq.query do
     select :x, :y, :z, from(l), where { x > 1 && z < 9 }
